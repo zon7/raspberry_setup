@@ -46,6 +46,20 @@ To finish just mount the drive and check it
     df
     ls /mnt/NAS
 
+# 1.3 BTRFS problems
+Useful commands
+>
+    btrfs filesystem show # Shows all filesys and devices
+    btrfs filesystem df
+    
+To check the filesystem usage
+>
+    btrfs filesystem usage /mnt/NAS
+
+If some data is missing (Device missing) just fix it telling btrfs to use the unused space.
+>
+    btrfs filesystem resize max /mnt/NAS
+
 # 2. Basic Raspberry setup
 
 ## 2.1 Needed tools
