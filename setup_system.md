@@ -62,15 +62,38 @@ If some data is missing (Device missing) just fix it telling btrfs to use the un
 
 # 2. Basic Raspberry setup
 
-## 2.1 Needed tools
-Enable SSH if not enabled
+## 2.1  Enable SSH if not enabled
 >
     sudo systemctl enable ssh
     sudo systemctl start ssh
+## 2.2 Enable samba
+Install missing packages
+>
+    sudo apt install samba samba-common-bin
 
+Edit the samba file to give access to the given folder
+>
+    sudo vi /etc/samba/smb.conf
 
+At the end of the file add the following code
+>
+    [<SHARE_NAME>]
+    comment = Share folder name
+    path = /share
+    browseable = yes
+    writeable = Yes
+    only guest = no
+    create mask = 0777
+    directory mask = 0777
+    public = yes
+    guest ok = yes
 
-## 2.2 Setup mDNS/Zeroconf
+To finish, enable the service and restart it (in case it was started) to apply changes
+>
+    sudo systemctl enable smbd
+    sudo systemctl restart smbd
+
+## 2.3 Setup mDNS/Zeroconf
 This will allow us to access the machine by machine name instead of the IP (eg zon7pi.local).
 >
     # Install avahi
@@ -85,9 +108,17 @@ and in the hosts line add this before resolve and dns.
 
 After this, you should be able to ping the machine by hostname.local and acces urls by hostname.local
 
+# 2.4 Install and enable locate
+Locate is a tool to search for files. To install it
+>
+    apt install mlocate
+    # Run the first scan
+    updatedb
+After that, locate can be run as normal
+
 # 3. Install container management
 ## 3.1 Install docker
-
+>
     arch > sudo pacman -S docker
     debian > sudo apt install docker
 
@@ -114,7 +145,7 @@ Then create the portainer docker
         -v ~/apps/portainer/:/data \
         --name "portainer" portainer/portainer-ce:latest
 
-In order to connect navigate to
+In order to connect, navigate to
 https://localhost:9443
 
 
